@@ -27,9 +27,13 @@ const roles = [
   },
 ];
 
-export function RoleSelect() {
+interface RoleSelectProps {
+  onChange: (value: string) => void;
+}
+
+export function RoleSelect({ onChange }: RoleSelectProps) {
   return (
-    <Select>
+    <Select onValueChange={onChange}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select a role" />
       </SelectTrigger>
