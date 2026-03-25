@@ -1,20 +1,18 @@
 "use client";
 
+import { ImageUpload } from "@/components/ImageUpload";
 import { RoleSelect } from "@/components/RoleSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Home() {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [file, setFile] = useState(null);
 
-  function handleChange(e) {
-    console.log(e.target.files);
-    setFile(URL.createObjectURL(e.target.files[0]));
-  }
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   console.log({ name, role });
 
@@ -50,15 +48,12 @@ export default function Home() {
             <Label>Military Role</Label>
             <RoleSelect onChange={(value) => setRole(value)} />
           </div>
-          <div className="App">
-            <Label>Upload Image</Label>
-            <input type="file" onChange={handleChange} />
-            {file && <img src={file} alt="Uploaded preview" />}
-          </div>
 
-          <div>
-            <Button disabled={!name || !role || !file}>Generate</Button>
-          </div>
+          <Label>Upload Image</Label>
+
+          <ImageUpload onChange={(file, previewUrl) => setFile(file)} />
+
+          <Button disabled={!name || !role || !file}>Generate</Button>
         </div>
 
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row"></div>
