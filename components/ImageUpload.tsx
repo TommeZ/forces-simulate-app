@@ -35,9 +35,9 @@ export function ImageUpload({ onChange }: ImageUploadProps) {
         type="button"
         variant="outline"
         onClick={() => fileInputRef.current?.click()}
-        className="w-full"
+        className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-amber-400 hover:border-amber-500 rounded-none h-11 transition-all"
       >
-        {preview ? "Change Photo" : "Choose Photo"}
+        {preview ? "↺ Change Photo" : "+ Choose Photo"}
       </Button>
 
       {preview && (

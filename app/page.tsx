@@ -5,58 +5,114 @@ import { RoleSelect } from "@/components/RoleSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
-  const [file, setFile] = useState(null);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  console.log({ name, role });
+  const [file, setFile] = useState<File | null>(null);
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-between bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            See how you look in the Armed Forces
+    <div className="min-h-screen bg-zinc-950 font-mono text-zinc-100">
+      {/* Top bar */}
+      <div className="border-b border-zinc-800 px-8 py-3 flex items-center justify-between">
+        <span className="text-xs tracking-[0.3em] text-zinc-500 uppercase">
+          British Armed Forces
+        </span>
+        <span className="text-xs tracking-[0.3em] text-zinc-600 uppercase">
+          Recruitment Simulator
+        </span>
+      </div>
+
+      <main className="max-w-2xl mx-auto px-8 py-20">
+        {/* Header */}
+        <div className="mb-16">
+          <p className="text-xs tracking-[0.4em] text-amber-500 uppercase mb-4">
+            {"// Mission Briefing"}
+          </p>
+          <h1 className="text-4xl font-bold tracking-tight text-zinc-100 leading-tight mb-4">
+            See yourself in
+            <br />
+            <span className="text-amber-400">the Armed Forces</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking the start a career in the British Armed Forces? Head over to{" "}
+          <p className="text-zinc-400 text-sm leading-relaxed max-w-md">
+            Enter your details below. Our system will generate a personalised
+            portrait and brief you on life in your chosen role.
+          </p>
+          <div className="mt-6 flex gap-4 text-xs text-zinc-600">
             <a
               href="https://recruitment.raf.mod.uk/find-your-role"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              className="hover:text-amber-400 transition-colors tracking-wider uppercase"
             >
-              Royal Air Force
-            </a>{" "}
-            or{" "}
+              → Royal Air Force
+            </a>
             <a
               href="https://jobs.army.mod.uk/regular-army/types-of-roles/"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              className="hover:text-amber-400 transition-colors tracking-wider uppercase"
             >
-              Army
+              → Army
             </a>
-          </p>
-          <div className="flex flex-col gap-1.5 w-full">
-            <Label>Name</Label>
-            <Input onChange={(e) => setName(e.target.value)} />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-px flex-1 bg-zinc-800" />
+          <span className="text-xs tracking-[0.3em] text-zinc-600 uppercase">
+            Personnel Data
+          </span>
+          <div className="h-px flex-1 bg-zinc-800" />
+        </div>
+
+        {/* Form */}
+        <div className="flex flex-col gap-8">
+          {/* Name */}
+          <div className="flex flex-col gap-2">
+            <Label className="text-xs tracking-[0.2em] uppercase text-zinc-400">
+              01 — Full Name
+            </Label>
+            <Input
+              placeholder="e.g. James Henderson"
+              onChange={(e) => setName(e.target.value)}
+              className="bg-zinc-900 border-zinc-700 text-zinc-100 placeholder:text-zinc-600 focus:border-amber-500 focus:ring-amber-500 rounded-none h-11"
+            />
           </div>
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <Label>Military Role</Label>
+          {/* Role */}
+          <div className="flex flex-col gap-2">
+            <Label className="text-xs tracking-[0.2em] uppercase text-zinc-400">
+              02 — Desired Role
+            </Label>
             <RoleSelect onChange={(value) => setRole(value)} />
           </div>
 
-          <Label>Upload Image</Label>
+          {/* Image */}
+          <div className="flex flex-col gap-2">
+            <Label className="text-xs tracking-[0.2em] uppercase text-zinc-400">
+              03 — Upload Photo
+            </Label>
+            <ImageUpload onChange={(file) => setFile(file)} />
+          </div>
 
-          <ImageUpload onChange={(file, previewUrl) => setFile(file)} />
+          {/* Divider */}
+          <div className="h-px bg-zinc-800" />
 
-          <Button disabled={!name || !role || !file}>Generate</Button>
+          {/* Submit */}
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-zinc-600">
+              {!name && !role && !file && "Complete all fields to continue"}
+              {name && !role && "Select a role"}
+              {name && role && !file && "Upload a photo"}
+              {name && role && file && "Ready to deploy →"}
+            </p>
+            <Button
+              disabled={!name || !role || !file}
+              className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              Generate
+            </Button>
+          </div>
         </div>
-
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row"></div>
       </main>
     </div>
   );

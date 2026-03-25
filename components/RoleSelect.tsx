@@ -34,7 +34,7 @@ interface RoleSelectProps {
 export function RoleSelect({ onChange }: RoleSelectProps) {
   return (
     <Select onValueChange={onChange}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="w-full bg-zinc-900 border-zinc-700 text-zinc-100 rounded-none h-11 focus:ring-amber-500 focus:border-amber-500">
         <SelectValue placeholder="Select a role" />
       </SelectTrigger>
       <SelectContent>
