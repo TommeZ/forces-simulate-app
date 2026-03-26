@@ -124,6 +124,14 @@ export default function Home() {
               Generate
             </Button>
           </div>
+          {story && (
+            <div className="mt-10 border border-zinc-800 p-6">
+              <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
+                {"// Mission Report"}
+              </p>
+              <p className="text-zinc-300 text-sm leading-relaxed">{story}</p>
+            </div>
+          )}
         </div>
       </main>
     </div>

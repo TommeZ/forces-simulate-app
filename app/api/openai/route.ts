@@ -9,10 +9,11 @@ export async function POST(request: Request) {
 
   try {
     const response = await client.responses.create({
-      model: "gpt-5-mini",
+      model: "gpt-4o-mini",
       instructions:
-        "Paint the picture and really sell this lifetime opportunity. Be vivid, emotional, and immersive. Write in second person.",
-      input: `British military role: ${role}. Person: ${name}. Write a compelling story of their future.`,
+        "Paint the picture and really sell this lifetime opportunity. Keep it to 3 sentences maximum.",
+      input: `Write a story about what life would be like in the British military as a ${role} for ${name}`,
+      max_output_tokens: 150,
     });
 
     console.log(response.output_text);
