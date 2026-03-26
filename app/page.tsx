@@ -11,6 +11,17 @@ export default function Home() {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [story, setStory] = useState("");
+
+  async function handleSubmit() {
+    const res = await fetch("/api/openai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, role }),
+    });
+    const data = await res.json();
+    setStory(data.story);
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 font-mono text-zinc-100">
@@ -106,8 +117,9 @@ export default function Home() {
               {name && role && file && "Ready to deploy →"}
             </p>
             <Button
-              disabled={!name || !role || !file}
+              disabled={Boolean(!name || !role || !file)}
               className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              onClick={handleSubmit}
             >
               Generate
             </Button>
