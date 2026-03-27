@@ -14,19 +14,21 @@ export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [story, setStory] = useState("");
   const [image, setImage] = useState("");
-  const [loading, setLoading] = useState(false);
   const [audio, setAudio] = useState(false);
-  const [hasGenerated, setHasGenerated] = useState(false);
+  const [storyLoading, setStoryLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
 
   async function handleSubmit(file: File) {
-    setHasGenerated(false);
+    setStory("");
+    setImage("");
+    setStoryLoading(true);
+    setImageLoading(true);
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("name", name);
     formData.append("role", role);
 
-    // kick off both at the same time but handle them independently
     const storyPromise = fetch("/api/openai/story", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -38,19 +40,20 @@ export default function Home() {
       body: formData,
     });
 
-    // handle story as soon as it arrives
     storyPromise.then(async (res) => {
       const data = await res.json();
       setStory(data.story);
+      setStoryLoading(false);
     });
 
-    // handle image as soon as it arrives
     imagePromise.then(async (res) => {
       const data = await res.json();
       setImage(`data:image/png;base64,${data.image}`);
-      setHasGenerated(true);
+      setImageLoading(false);
     });
   }
+
+  const isGenerating = storyLoading || imageLoading;
 
   return (
     <div className="min-h-screen bg-zinc-950 font-mono text-zinc-100">
@@ -146,33 +149,54 @@ export default function Home() {
               {name && role && file && "Ready to deploy →"}
             </p>
             <Button
-              disabled={Boolean(!name || !role || !file)}
+              disabled={Boolean(!name || !role || !file) || isGenerating}
               className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               onClick={() => file && handleSubmit(file)}
             >
-              {hasGenerated ? "Regenerate" : "Generate"}
+              {image && story ? "Regenerate" : "Generate"}
             </Button>
           </div>
-          {story && (
+          {/* Story card - shows spinner while loading, content when ready */}
+          {(storyLoading || story) && (
             <div className="mt-10 border border-zinc-800 p-6">
               <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
                 {"// Mission Report"}
               </p>
-              <p className="text-zinc-300 text-sm leading-relaxed">{story}</p>
+              {storyLoading ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-xs text-zinc-500">
+                    Generating your story...
+                  </p>
+                </div>
+              ) : (
+                <p className="text-zinc-300 text-sm leading-relaxed">{story}</p>
+              )}
             </div>
           )}
-          {image && (
+
+          {/* Image card - shows spinner while loading, content when ready */}
+          {(imageLoading || image) && (
             <div className="mt-6 border border-zinc-800 p-6">
               <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
                 {"// Personnel Portrait"}
               </p>
-              <Image
-                src={image}
-                width={500}
-                height={500}
-                alt="Generated military portrait"
-                className="w-full object-cover"
-              />
+              {imageLoading ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                  <p className="text-xs text-zinc-500">
+                    Generating your portrait...
+                  </p>
+                </div>
+              ) : (
+                <Image
+                  src={image}
+                  width={500}
+                  height={500}
+                  alt="Generated military portrait"
+                  className="w-full object-cover"
+                />
+              )}
             </div>
           )}
         </div>
