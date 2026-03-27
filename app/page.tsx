@@ -14,23 +14,42 @@ export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [story, setStory] = useState("");
   const [image, setImage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [audio, setAudio] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
 
   async function handleSubmit(file: File) {
+    setHasGenerated(false);
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("name", name);
     formData.append("role", role);
 
-    const res = await fetch("/api/openai", {
+    // kick off both at the same time but handle them independently
+    const storyPromise = fetch("/api/openai/story", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, role }),
+    });
+
+    const imagePromise = fetch("/api/openai/image", {
       method: "POST",
       body: formData,
     });
 
-    const data = await res.json();
-    setStory(data.story);
-    setImage(`data:image/png;base64,${data.image}`);
-    setHasGenerated(true);
+    // handle story as soon as it arrives
+    storyPromise.then(async (res) => {
+      const data = await res.json();
+      setStory(data.story);
+    });
+
+    // handle image as soon as it arrives
+    imagePromise.then(async (res) => {
+      const data = await res.json();
+      setImage(`data:image/png;base64,${data.image}`);
+      setHasGenerated(true);
+    });
   }
 
   return (

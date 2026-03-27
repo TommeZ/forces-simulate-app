@@ -10,24 +10,6 @@ export async function POST(request: Request) {
   const file = formData.get("file") as File;
 
   try {
-    const storyRes = await client.responses.create({
-      model: "gpt-5.4",
-      instructions:
-        "Paint the picture and really sell this lifetime opportunity. Keep it to 3 sentences maximum.",
-      input: `Write a story about what life would be like in the British military as a ${role} for ${name}`,
-      max_output_tokens: 150,
-    });
-
-    const story = storyRes.output_text;
-    console.log("story:", story);
-
-    if (!story) {
-      return NextResponse.json(
-        { error: "Story generation failed" },
-        { status: 500 },
-      );
-    }
-
     const imageRes = await client.images.edit({
       model: "gpt-image-1",
       image: file,
@@ -50,7 +32,6 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      story,
       image,
     });
   } catch (error) {
