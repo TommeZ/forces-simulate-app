@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import Image from "next/image";
 import { AudioPlayer } from "@/components/AudioPlayer";
+import { ImageCard } from "@/components/ImageCard";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -175,7 +175,7 @@ export default function Home() {
               {image && story ? "Regenerate" : "Generate"}
             </Button>
           </div>
-          {/* Story card - shows spinner while loading, content when ready */}
+          {/* Story card */}
           {(storyLoading || story) && (
             <div className="mt-10 border border-zinc-800 p-6">
               <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
@@ -194,29 +194,9 @@ export default function Home() {
             </div>
           )}
 
-          {/* Image card - shows spinner while loading, content when ready */}
+          {/* Image card */}
           {(imageLoading || image) && (
-            <div className="mt-6 border border-zinc-800 p-6">
-              <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
-                {"// Personnel Portrait"}
-              </p>
-              {imageLoading ? (
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-xs text-zinc-500">
-                    Generating your portrait...
-                  </p>
-                </div>
-              ) : (
-                <Image
-                  src={image}
-                  width={500}
-                  height={500}
-                  alt="Generated military portrait"
-                  className="w-full object-cover"
-                />
-              )}
-            </div>
+            <ImageCard imageLoading={imageLoading} image={image} />
           )}
           {audioUrl && <AudioPlayer url={audioUrl} />}
         </div>

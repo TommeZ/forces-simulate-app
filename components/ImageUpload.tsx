@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import Image from "next/image";
 
 interface ImageUploadProps {
   onChange: (file: File, previewUrl: string) => void;
@@ -41,10 +41,12 @@ export function ImageUpload({ onChange }: ImageUploadProps) {
       </Button>
 
       {preview && (
-        <img
+        <Image
           src={preview}
           alt="Uploaded preview"
           className="mt-2 w-32 h-32 object-cover rounded-full border border-zinc-200"
+          width={500}
+          height={500}
         />
       )}
     </div>
