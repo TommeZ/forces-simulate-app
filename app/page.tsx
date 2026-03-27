@@ -12,15 +12,24 @@ export default function Home() {
   const [role, setRole] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [story, setStory] = useState("");
+  const [image, setImage] = useState("");
+  const [hasGenerated, setHasGenerated] = useState(false);
 
-  async function handleSubmit() {
+  async function handleSubmit(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", name);
+    formData.append("role", role);
+
     const res = await fetch("/api/openai", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role }),
+      body: formData,
     });
+
     const data = await res.json();
     setStory(data.story);
+    setImage(`data:image/png;base64,${data.image}`);
+    setHasGenerated(true);
   }
 
   return (
@@ -39,7 +48,7 @@ export default function Home() {
         {/* Header */}
         <div className="mb-16">
           <p className="text-xs tracking-[0.4em] text-amber-500 uppercase mb-4">
-            {"// Mission Briefing"}
+            {/* {"// Mission Briefing"} */}
           </p>
           <h1 className="text-4xl font-bold tracking-tight text-zinc-100 leading-tight mb-4">
             See yourself in
@@ -119,9 +128,9 @@ export default function Home() {
             <Button
               disabled={Boolean(!name || !role || !file)}
               className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              onClick={handleSubmit}
+              onClick={() => file && handleSubmit(file)}
             >
-              Generate
+              {hasGenerated ? "Regenerate" : "Generate"}
             </Button>
           </div>
           {story && (
@@ -130,6 +139,18 @@ export default function Home() {
                 {"// Mission Report"}
               </p>
               <p className="text-zinc-300 text-sm leading-relaxed">{story}</p>
+            </div>
+          )}
+          {image && (
+            <div className="mt-6 border border-zinc-800 p-6">
+              <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
+                {"// Personnel Portrait"}
+              </p>
+              <img
+                src={image}
+                alt="Generated military portrait"
+                className="w-full object-cover"
+              />
             </div>
           )}
         </div>
