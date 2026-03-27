@@ -16,10 +16,16 @@ export async function POST(request: Request) {
       response_format: "wav",
     });
 
-    return NextResponse.json(response);
+    // convert to binary buffer and send as audio
+    const buffer = Buffer.from(await response.arrayBuffer());
+    return new NextResponse(buffer, {
+      headers: {
+        "Content-Type": "audio/wav",
+        "Content-Length": buffer.length.toString(),
+      },
+    });
   } catch (error) {
     console.error("Failed to generate audio:", error);
-
     return NextResponse.json(
       { error: "Failed to generate content" },
       { status: 500 },

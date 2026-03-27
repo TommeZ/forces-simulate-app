@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import Image from "next/image";
+import { AudioPlayer } from "@/components/AudioPlayer";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -14,15 +15,22 @@ export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [story, setStory] = useState("");
   const [image, setImage] = useState("");
-  const [audio, setAudio] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [storyLoading, setStoryLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
 
+  const isGenerating = storyLoading || imageLoading;
+
   async function handleSubmit(file: File) {
+    if (isGenerating) return;
+
     setStory("");
     setImage("");
+    setAudioUrl(null);
     setStoryLoading(true);
     setImageLoading(true);
+
+    let storyText = ""; // store story text here to avoid reading response twice
 
     const formData = new FormData();
     formData.append("file", file);
@@ -42,6 +50,7 @@ export default function Home() {
 
     storyPromise.then(async (res) => {
       const data = await res.json();
+      storyText = data.story; // save it here
       setStory(data.story);
       setStoryLoading(false);
     });
@@ -51,9 +60,19 @@ export default function Home() {
       setImage(`data:image/png;base64,${data.image}`);
       setImageLoading(false);
     });
-  }
 
-  const isGenerating = storyLoading || imageLoading;
+    // use storyText instead of re-reading the response
+    Promise.all([storyPromise, imagePromise]).then(async () => {
+      const audioRes = await fetch("/api/openai/voice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ story: storyText }),
+      });
+
+      const blob = await audioRes.blob();
+      setAudioUrl(URL.createObjectURL(blob));
+    });
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 font-mono text-zinc-100">
@@ -199,6 +218,7 @@ export default function Home() {
               )}
             </div>
           )}
+          {audioUrl && <AudioPlayer url={audioUrl} />}
         </div>
       </main>
     </div>
