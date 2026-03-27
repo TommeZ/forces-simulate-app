@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { ImageCard } from "@/components/ImageCard";
+import { StoryCard } from "@/components/StoryCard";
+import { fetchStory, fetchImage, fetchAudio } from "@/lib/api";
+import { StatusMessage } from "@/components/StatusMessage";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -30,46 +33,26 @@ export default function Home() {
     setStoryLoading(true);
     setImageLoading(true);
 
-    let storyText = ""; // store story text here to avoid reading response twice
+    let storyText = "";
 
     const formData = new FormData();
     formData.append("file", file);
     formData.append("name", name);
     formData.append("role", role);
 
-    const storyPromise = fetch("/api/openai/story", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role }),
-    });
-
-    const imagePromise = fetch("/api/openai/image", {
-      method: "POST",
-      body: formData,
-    });
-
-    storyPromise.then(async (res) => {
-      const data = await res.json();
-      storyText = data.story; // save it here
-      setStory(data.story);
+    const storyPromise = fetchStory(name, role).then((story) => {
+      storyText = story;
+      setStory(story);
       setStoryLoading(false);
     });
 
-    imagePromise.then(async (res) => {
-      const data = await res.json();
-      setImage(`data:image/png;base64,${data.image}`);
+    const imagePromise = fetchImage(formData).then((image) => {
+      setImage(`data:image/png;base64,${image}`);
       setImageLoading(false);
     });
 
-    // use storyText instead of re-reading the response
     Promise.all([storyPromise, imagePromise]).then(async () => {
-      const audioRes = await fetch("/api/openai/voice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ story: storyText }),
-      });
-
-      const blob = await audioRes.blob();
+      const blob = await fetchAudio(storyText);
       setAudioUrl(URL.createObjectURL(blob));
     });
   }
@@ -89,9 +72,6 @@ export default function Home() {
       <main className="max-w-2xl mx-auto px-8 py-20">
         {/* Header */}
         <div className="mb-16">
-          <p className="text-xs tracking-[0.4em] text-amber-500 uppercase mb-4">
-            {/* {"// Mission Briefing"} */}
-          </p>
           <h1 className="text-4xl font-bold tracking-tight text-zinc-100 leading-tight mb-4">
             See yourself in
             <br />
@@ -161,14 +141,14 @@ export default function Home() {
 
           {/* Submit */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-zinc-600">
-              {!name && !role && !file && "Complete all fields to continue"}
-              {name && !role && "Select a role"}
-              {name && role && !file && "Upload a photo"}
-              {name && role && file && "Ready to deploy →"}
-            </p>
+            <StatusMessage name={name} role={role} file={file} />
+
             <Button
-              disabled={Boolean(!name || !role || !file) || isGenerating}
+              disabled={
+                Boolean(!name || !role || !file) ||
+                isGenerating ||
+                (!!story && !audioUrl)
+              }
               className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               onClick={() => file && handleSubmit(file)}
             >
@@ -177,26 +157,12 @@ export default function Home() {
           </div>
           {/* Story card */}
           {(storyLoading || story) && (
-            <div className="mt-10 border border-zinc-800 p-6">
-              <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
-                {"// Mission Report"}
-              </p>
-              {storyLoading ? (
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-                  <p className="text-xs text-zinc-500">
-                    Generating your story...
-                  </p>
-                </div>
-              ) : (
-                <p className="text-zinc-300 text-sm leading-relaxed">{story}</p>
-              )}
-            </div>
+            <StoryCard story={story} isLoading={storyLoading} />
           )}
 
           {/* Image card */}
           {(imageLoading || image) && (
-            <ImageCard imageLoading={imageLoading} image={image} />
+            <ImageCard isLoading={imageLoading} image={image} />
           )}
           {audioUrl && <AudioPlayer url={audioUrl} />}
         </div>
