@@ -21,8 +21,11 @@ export default function Home() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [storyLoading, setStoryLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
-  const currentRef = useRef<null | HTMLDivElement>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLDivElement>(null);
 
   const isGenerating = storyLoading || imageLoading;
 
@@ -60,10 +63,34 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if ((storyLoading || story) && currentRef.current) {
-      currentRef.current.scrollIntoView({ behavior: "smooth" });
+    if (storyLoading && storyRef.current) {
+      storyRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [storyLoading, story]);
+  }, [storyLoading]);
+
+  useEffect(() => {
+    if (image && imageRef.current) {
+      imageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [image]);
+
+  useEffect(() => {
+    if (audioUrl && audioRef.current) {
+      audioRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [audioUrl]);
+
+  function handleReset() {
+    setResetKey((k) => k + 1);
+    setName("");
+    setRole("");
+    setFile(null);
+    setStory("");
+    setImage("");
+    setAudioUrl(null);
+    setStoryLoading(false);
+    setImageLoading(false);
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 font-mono text-zinc-100">
@@ -122,6 +149,7 @@ export default function Home() {
               01 — Full Name
             </Label>
             <Input
+              key={resetKey}
               placeholder="e.g. James Henderson"
               onChange={(e) => setName(e.target.value)}
               className="bg-zinc-900 border-zinc-700 text-zinc-100 placeholder:text-zinc-600 focus:border-amber-500 focus:ring-amber-500 rounded-none h-11"
@@ -133,7 +161,7 @@ export default function Home() {
             <Label className="text-xs tracking-[0.2em] uppercase text-zinc-400">
               02 — Desired Role
             </Label>
-            <RoleSelect onChange={(value) => setRole(value)} />
+            <RoleSelect key={resetKey} onChange={(value) => setRole(value)} />
           </div>
 
           {/* Image */}
@@ -141,7 +169,7 @@ export default function Home() {
             <Label className="text-xs tracking-[0.2em] uppercase text-zinc-400">
               03 — Upload Photo
             </Label>
-            <ImageUpload onChange={(file) => setFile(file)} />
+            <ImageUpload key={resetKey} onChange={(file) => setFile(file)} />
           </div>
 
           {/* Divider */}
@@ -150,33 +178,47 @@ export default function Home() {
           {/* Submit */}
           <div className="flex items-center justify-between">
             <StatusMessage name={name} role={role} file={file} />
-
-            <Button
-              disabled={
-                Boolean(!name || !role || !file) ||
-                isGenerating ||
-                (!!story && !audioUrl)
-              }
-              className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              onClick={() => file && handleSubmit(file)}
-            >
-              {image && story ? "Regenerate" : "Generate"}
-            </Button>
+            <div className="flex gap-2">
+              {(story || image || audioUrl) && (
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  className="border-zinc-700 text-zinc-400 hover:text-zinc-100 hover:border-zinc-500 rounded-none h-11 px-4 text-xs tracking-widest uppercase transition-all"
+                >
+                  Reset
+                </Button>
+              )}
+              <Button
+                disabled={
+                  Boolean(!name || !role || !file) ||
+                  isGenerating ||
+                  (!!story && !audioUrl)
+                }
+                className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold tracking-widest uppercase text-xs px-8 h-11 rounded-none disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                onClick={() => file && handleSubmit(file)}
+              >
+                {image && story ? "Regenerate" : "Generate"}
+              </Button>
+            </div>
           </div>
           {/* Story card */}
           {(storyLoading || story) && (
             <StoryCard
               story={story}
               isLoading={storyLoading}
-              currentRef={currentRef}
+              currentRef={storyRef}
             />
           )}
 
           {/* Image card */}
           {(imageLoading || image) && (
-            <ImageCard isLoading={imageLoading} image={image} />
+            <ImageCard
+              isLoading={imageLoading}
+              image={image}
+              currentRef={imageRef}
+            />
           )}
-          {audioUrl && <AudioPlayer url={audioUrl} />}
+          {audioUrl && <AudioPlayer url={audioUrl} currentRef={audioRef} />}
         </div>
       </main>
     </div>

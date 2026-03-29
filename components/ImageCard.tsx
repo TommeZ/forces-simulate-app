@@ -1,13 +1,15 @@
 import Image from "next/image";
+import { Ref } from "react";
 
 interface ImageCardProps {
   isLoading: boolean;
   image: string;
+  currentRef: Ref<HTMLDivElement> | undefined;
 }
 
-export function ImageCard({ isLoading, image }: ImageCardProps) {
+export function ImageCard({ isLoading, image, currentRef }: ImageCardProps) {
   return (
-    <div className="mt-6 border border-zinc-800 p-6">
+    <div ref={currentRef} className="mt-6 border border-zinc-800 p-6">
       <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
         {"// Personnel Portrait"}
       </p>

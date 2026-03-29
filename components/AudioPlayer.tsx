@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 
 interface AudioPlayerProps {
   url: string;
+  currentRef: Ref<HTMLDivElement> | undefined;
 }
 
-export function AudioPlayer({ url }: AudioPlayerProps) {
+export function AudioPlayer({ url, currentRef }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -38,7 +39,7 @@ export function AudioPlayer({ url }: AudioPlayerProps) {
   }
 
   return (
-    <div className="border border-zinc-800 p-6">
+    <div ref={currentRef} className="border border-zinc-800 p-6">
       <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-4">
         {"// Mission Audio"}
       </p>
