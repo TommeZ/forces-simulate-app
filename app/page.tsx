@@ -5,7 +5,7 @@ import { RoleSelect } from "@/components/RoleSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { ImageCard } from "@/components/ImageCard";
 import { StoryCard } from "@/components/StoryCard";
@@ -21,6 +21,8 @@ export default function Home() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [storyLoading, setStoryLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
+
+  const currentRef = useRef<null | HTMLDivElement>(null);
 
   const isGenerating = storyLoading || imageLoading;
 
@@ -56,6 +58,12 @@ export default function Home() {
       setAudioUrl(URL.createObjectURL(blob));
     });
   }
+
+  useEffect(() => {
+    if ((storyLoading || story) && currentRef.current) {
+      currentRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [storyLoading, story]);
 
   return (
     <div className="min-h-screen bg-zinc-950 font-mono text-zinc-100">
@@ -157,7 +165,11 @@ export default function Home() {
           </div>
           {/* Story card */}
           {(storyLoading || story) && (
-            <StoryCard story={story} isLoading={storyLoading} />
+            <StoryCard
+              story={story}
+              isLoading={storyLoading}
+              currentRef={currentRef}
+            />
           )}
 
           {/* Image card */}

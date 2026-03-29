@@ -1,11 +1,14 @@
+import { Ref } from "react";
+
 interface StoryCardProps {
   story: string;
   isLoading: boolean;
+  currentRef: Ref<HTMLDivElement> | undefined;
 }
 
-export function StoryCard({ story, isLoading }: StoryCardProps) {
+export function StoryCard({ story, isLoading, currentRef }: StoryCardProps) {
   return (
-    <div className="mt-10 border border-zinc-800 p-6">
+    <div ref={currentRef} className="mt-10 border border-zinc-800 p-6">
       <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
         {"// Mission Report"}
       </p>
