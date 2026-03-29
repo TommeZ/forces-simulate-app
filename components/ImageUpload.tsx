@@ -23,32 +23,32 @@ export function ImageUpload({ onChange }: ImageUploadProps) {
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        onChange={handleChange}
-        className="hidden"
-      />
-
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => fileInputRef.current?.click()}
-        className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-amber-400 hover:border-amber-500 rounded-none h-11 transition-all"
-      >
-        {preview ? "↺ Change Photo" : "+ Choose Photo"}
-      </Button>
-
-      {preview && (
-        <Image
-          src={preview}
-          alt="Uploaded preview"
-          className="mt-2 w-32 h-32 object-cover rounded-full border border-zinc-200"
-          width={500}
-          height={500}
+      <div className="flex items-center gap-3">
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleChange}
+          className="hidden"
         />
-      )}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full bg-zinc-900 border-zinc-700 text-zinc-400 hover:text-amber-400 hover:border-amber-500 rounded-none h-11 transition-all"
+        >
+          {preview ? "↺ Change Photo" : "+ Choose Photo"}
+        </Button>
+        {preview && (
+          <Image
+            src={preview}
+            alt="Uploaded preview"
+            className="w-11 h-11 object-cover rounded-full border border-zinc-700 shrink-0"
+            width={500}
+            height={500}
+          />
+        )}
+      </div>
     </div>
   );
 }

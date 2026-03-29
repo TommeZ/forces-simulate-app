@@ -64,7 +64,8 @@ export default function Home() {
 
   useEffect(() => {
     if (storyLoading && storyRef.current) {
-      storyRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+      storyRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.scrollBy({ top: -40, behavior: "smooth" });
     }
   }, [storyLoading]);
 
