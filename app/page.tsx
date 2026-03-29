@@ -65,7 +65,6 @@ export default function Home() {
   useEffect(() => {
     if (storyLoading && storyRef.current) {
       storyRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.scrollBy({ top: -40, behavior: "smooth" });
     }
   }, [storyLoading]);
 
@@ -151,6 +150,7 @@ export default function Home() {
             </Label>
             <Input
               key={resetKey}
+              autoComplete="off"
               placeholder="e.g. James Henderson"
               onChange={(e) => setName(e.target.value)}
               className="bg-zinc-900 border-zinc-700 text-zinc-100 placeholder:text-zinc-600 focus:border-amber-500 focus:ring-amber-500 rounded-none h-11"
