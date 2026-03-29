@@ -8,7 +8,10 @@ interface StoryCardProps {
 
 export function StoryCard({ story, isLoading, currentRef }: StoryCardProps) {
   return (
-    <div ref={currentRef} className="mt-10 border border-zinc-800 p-6">
+    <div
+      ref={currentRef}
+      className="mt-10 border border-zinc-800 scroll-mt-50 p-6"
+    >
       <p className="text-xs tracking-[0.3em] text-amber-500 uppercase mb-3">
         {"// Mission Report"}
       </p>
