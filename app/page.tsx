@@ -168,7 +168,7 @@ export default function Home() {
           {/* Image */}
           <div className="flex flex-col gap-2">
             <Label className="text-xs tracking-[0.2em] uppercase text-zinc-400">
-              03 — Upload Photo
+              03 — Upload a photo of yourself
             </Label>
             <ImageUpload key={resetKey} onChange={(file) => setFile(file)} />
           </div>
