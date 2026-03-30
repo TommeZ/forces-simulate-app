@@ -23,8 +23,8 @@ See yourself in the British Armed Forces. Enter your name, select a military rol
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/forces-simulator.git
-cd forces-simulator
+git clone https://github.com/your-username/military-simulator.git
+cd military-simulator
 ```
 
 ### 2. Install dependencies
