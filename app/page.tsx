@@ -100,7 +100,7 @@ export default function Home() {
           British Armed Forces
         </span>
         <span className="text-xs tracking-[0.3em] text-zinc-600 uppercase">
-          Recruitment Simulator
+          Military Recruitment Simulator
         </span>
       </div>
 
