@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { ImageCard } from "@/components/ImageCard";
 import { StoryCard } from "@/components/StoryCard";
-import { fetchStory, fetchImage, fetchAudio } from "@/lib/api";
+import { fetchStory, fetchImage, fetchAudio, saveGeneration } from "@/lib/api";
 import { StatusMessage } from "@/components/StatusMessage";
 
 export default function Home() {
@@ -51,14 +51,30 @@ export default function Home() {
       setStoryLoading(false);
     });
 
+    let imageData = "";
+
     const imagePromise = fetchImage(formData).then((image) => {
-      setImage(`data:image/png;base64,${image}`);
+      imageData = `data:image/png;base64,${image}`;
+      setImage(imageData);
       setImageLoading(false);
     });
 
     Promise.all([storyPromise, imagePromise]).then(async () => {
       const blob = await fetchAudio(storyText);
-      setAudioUrl(URL.createObjectURL(blob));
+
+      const reader = new FileReader();
+
+      reader.onloadend = async () => {
+        const base64Audio = reader.result as string;
+
+        setAudioUrl(base64Audio);
+
+        if (!storyText || !imageData) return;
+
+        await saveGeneration(name, role, storyText, imageData, base64Audio);
+      };
+
+      reader.readAsDataURL(blob);
     });
   }
 

@@ -25,3 +25,25 @@ export async function fetchAudio(story: string): Promise<Blob> {
   });
   return res.blob();
 }
+
+export async function saveGeneration(
+  name: string,
+  role: string,
+  story: string,
+  imageUrl: string,
+  audioUrl: string | null,
+): Promise<void> {
+  try {
+    const res = await fetch("/api/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, role, story, imageUrl, audioUrl }),
+    });
+
+    if (!res.ok) {
+      console.error("Save failed");
+    }
+  } catch (error) {
+    console.error("Failed to save generation", error);
+  }
+}
