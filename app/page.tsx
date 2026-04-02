@@ -11,6 +11,7 @@ import { ImageCard } from "@/components/ImageCard";
 import { StoryCard } from "@/components/StoryCard";
 import { fetchStory, fetchImage, fetchAudio, saveGeneration } from "@/lib/api";
 import { StatusMessage } from "@/components/StatusMessage";
+import Link from "next/link";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -115,9 +116,12 @@ export default function Home() {
         <span className="text-xs tracking-[0.3em] text-zinc-500 uppercase">
           British Armed Forces
         </span>
-        <span className="text-xs tracking-[0.3em] text-zinc-600 uppercase">
-          Military Recruitment Simulator
-        </span>
+        <Link
+          href="/history"
+          className="text-xs tracking-[0.3em] text-zinc-600 uppercase hover:text-amber-400 transition-colors"
+        >
+          Mission Archive →
+        </Link>
       </div>
 
       <main className="max-w-2xl mx-auto px-8 py-20">
