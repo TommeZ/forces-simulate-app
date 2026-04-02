@@ -11,9 +11,9 @@ export async function POST(request: Request) {
     const storyRes = await client.responses.create({
       model: "gpt-5.4",
       instructions:
-        "Paint the picture and really sell this lifetime opportunity. Keep it to 3 sentences maximum.",
+        "Write a concise, engaging military-style briefing in exactly 3 short sentences (around 80–100 words total). Keep sentences clear and not overly long. Ensure the response ends cleanly with a complete final sentence.",
       input: `Write a story about what life would be like in the British military as a ${role} for ${name}`,
-      max_output_tokens: 150,
+      max_output_tokens: 130,
     });
 
     const story = storyRes.output_text;
