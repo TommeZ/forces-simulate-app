@@ -5,5 +5,5 @@ interface Generation {
   story: string;
   imageUrl: string;
   audioUrl: string | null;
-  createdAt: string;
+  createdAt: Date;
 }
