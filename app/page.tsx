@@ -13,9 +13,9 @@ import {
   fetchStory,
   fetchImage,
   fetchAudio,
-  uploadInfo,
   uploadImage,
   uploadAudio,
+  saveGeneration,
 } from "@/lib/api";
 import { StatusMessage } from "@/components/StatusMessage";
 import Link from "next/link";
@@ -71,7 +71,6 @@ export default function Home() {
       const blob = await fetchAudio(storyText);
 
       const reader = new FileReader();
-
       reader.onloadend = async () => {
         const base64Audio = reader.result as string;
 
@@ -79,11 +78,12 @@ export default function Home() {
 
         if (!storyText || !imageData) return;
 
-        await uploadInfo(name, role, storyText);
+        // upload to cloudinary
+        const imageUrl = await uploadImage(imageData);
+        const audioUrlCloud = await uploadAudio(base64Audio);
 
-        await uploadImage(imageData);
-
-        await uploadAudio(base64Audio);
+        // save generation to MongoDB
+        await saveGeneration(name, role, storyText, imageUrl, audioUrlCloud);
       };
 
       reader.readAsDataURL(blob);

@@ -26,54 +26,48 @@ export async function fetchAudio(story: string): Promise<Blob> {
   return res.blob();
 }
 
-export async function uploadInfo(
+export async function saveGeneration(
   name: string,
   role: string,
   story: string,
+  image: string,
+  audio: string | null,
 ): Promise<void> {
-  try {
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role, story }),
-    });
-
-    if (!res.ok) {
-      console.error("Info upload failed");
-    }
-  } catch (error) {
-    console.error("Failed to upload info", error);
-  }
+  await fetch("/api/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      role,
+      story,
+      image,
+      audio,
+    }),
+  });
 }
 
-export async function uploadImage(image: string): Promise<void> {
-  try {
-    const res = await fetch("/api/upload/image", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image }),
-    });
+export async function uploadImage(image: string): Promise<string> {
+  const res = await fetch("/api/upload/image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image }),
+  });
 
-    if (!res.ok) {
-      console.error("Image upload Failed");
-    }
-  } catch (error) {
-    console.error("Failed to uplaoad image", error);
-  }
+  const data = await res.json();
+  return data.url;
 }
 
-export async function uploadAudio(audio: string | null): Promise<void> {
-  try {
-    const res = await fetch("/api/upload/audio", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ audio }),
-    });
+export async function uploadAudio(
+  audio: string | null,
+): Promise<string | null> {
+  if (!audio) return null;
 
-    if (!res.ok) {
-      console.error("Audio upload Failed");
-    }
-  } catch (error) {
-    console.error("Failed to upload audio", error);
-  }
+  const res = await fetch("/api/upload/audio", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ audio }),
+  });
+
+  const data = await res.json();
+  return data.url;
 }
