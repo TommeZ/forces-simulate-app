@@ -26,24 +26,54 @@ export async function fetchAudio(story: string): Promise<Blob> {
   return res.blob();
 }
 
-export async function saveGeneration(
+export async function uploadInfo(
   name: string,
   role: string,
   story: string,
-  imageUrl: string,
-  audioUrl: string | null,
 ): Promise<void> {
   try {
-    const res = await fetch("/api/save", {
+    const res = await fetch("/api/upload", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, role, story, imageUrl, audioUrl }),
+      body: JSON.stringify({ name, role, story }),
     });
 
     if (!res.ok) {
-      console.error("Save failed");
+      console.error("Info upload failed");
     }
   } catch (error) {
-    console.error("Failed to save generation", error);
+    console.error("Failed to upload info", error);
+  }
+}
+
+export async function uploadImage(image: string): Promise<void> {
+  try {
+    const res = await fetch("/api/upload/image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image }),
+    });
+
+    if (!res.ok) {
+      console.error("Image upload Failed");
+    }
+  } catch (error) {
+    console.error("Failed to uplaoad image", error);
+  }
+}
+
+export async function uploadAudio(audio: string | null): Promise<void> {
+  try {
+    const res = await fetch("/api/upload/audio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audio }),
+    });
+
+    if (!res.ok) {
+      console.error("Audio upload Failed");
+    }
+  } catch (error) {
+    console.error("Failed to upload audio", error);
   }
 }

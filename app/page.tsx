@@ -9,7 +9,14 @@ import { useEffect, useRef, useState } from "react";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { ImageCard } from "@/components/ImageCard";
 import { StoryCard } from "@/components/StoryCard";
-import { fetchStory, fetchImage, fetchAudio, saveGeneration } from "@/lib/api";
+import {
+  fetchStory,
+  fetchImage,
+  fetchAudio,
+  uploadInfo,
+  uploadImage,
+  uploadAudio,
+} from "@/lib/api";
 import { StatusMessage } from "@/components/StatusMessage";
 import Link from "next/link";
 
@@ -72,7 +79,11 @@ export default function Home() {
 
         if (!storyText || !imageData) return;
 
-        await saveGeneration(name, role, storyText, imageData, base64Audio);
+        await uploadInfo(name, role, storyText);
+
+        await uploadImage(imageData);
+
+        await uploadAudio(base64Audio);
       };
 
       reader.readAsDataURL(blob);
