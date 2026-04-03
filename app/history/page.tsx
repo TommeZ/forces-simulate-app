@@ -8,6 +8,7 @@ export default async function HistoryPage() {
   try {
     generations = await prisma.generation.findMany({
       orderBy: { createdAt: "desc" },
+      take: 10,
     });
   } catch (error) {
     console.error("Failed to fetch history:", error);
