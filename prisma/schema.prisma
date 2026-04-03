@@ -19,7 +19,5 @@ model Generation {
   name      String
   role      String
   story     String
-  imageUrl  String
-  audioUrl  String?
   createdAt DateTime @default(now())
 }
