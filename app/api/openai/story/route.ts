@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       instructions:
         "Write a concise, engaging military-style briefing in exactly 3 short sentences (around 80–100 words total). Keep sentences clear and not overly long. Ensure the response ends cleanly with a complete final sentence.",
       input: `Write a story about what life would be like in the British military as a ${role} for ${name}`,
-      max_output_tokens: 130,
+      max_output_tokens: 160,
     });
 
     const story = storyRes.output_text;
