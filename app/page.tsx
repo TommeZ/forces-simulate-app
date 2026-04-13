@@ -37,6 +37,16 @@ export default function Home() {
 
   const isGenerating = storyLoading || imageLoading;
 
+  useEffect(() => {
+    const currentUrl = audioUrl;
+
+    return () => {
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+      }
+    };
+  }, [audioUrl]);
+
   async function handleSubmit(file: File) {
     if (isGenerating) return;
 
@@ -70,19 +80,18 @@ export default function Home() {
     Promise.all([storyPromise, imagePromise]).then(async () => {
       const blob = await fetchAudio(storyText);
 
+      const audioObjectUrl = URL.createObjectURL(blob);
+      setAudioUrl(audioObjectUrl);
+
+      if (!storyText || !imageData) return;
+
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64Audio = reader.result as string;
 
-        setAudioUrl(base64Audio);
-
-        if (!storyText || !imageData) return;
-
-        // upload to cloudinary
         const imageUrl = await uploadImage(imageData);
         const audioUrlCloud = await uploadAudio(base64Audio);
 
-        // save generation to MongoDB
         await saveGeneration(name, role, storyText, imageUrl, audioUrlCloud);
       };
 
