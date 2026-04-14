@@ -81,11 +81,13 @@ export default function Home() {
       const blob = await fetchAudio(storyText);
 
       const audioObjectUrl = URL.createObjectURL(blob);
+
       setAudioUrl(audioObjectUrl);
 
       if (!storyText || !imageData) return;
 
       const reader = new FileReader();
+
       reader.onloadend = async () => {
         const base64Audio = reader.result as string;
 
